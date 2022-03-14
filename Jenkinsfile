@@ -4,14 +4,20 @@ pipeline {
         stages {
             stage('Start') {
              steps {
+                    sh 'mkdir -p locust_results' 
                     sh 'python3 -m venv venv/'
                     sh 'pip3 install -r requirements.txt'
                     sh 'ls'
                     sh '''locust -f locustfile.py --headless --only-summary -u 100 -t 10s -r 5 --html $report$(date +%Y%m%d%H%M).html'''
+                    sh 'cp -r /var/jenkins_home/workspace/Locust/*.html  locust_results' 
              }
-        post {
-         always {
-                  sh 'npm run generate-report'
+             step ([$class: 'CopyArtifact',
+                  projectName: ‘Locust’,
+                   filter: 'locust_results/*']);
+       
+              post {
+                always {
+                     sh 'npm run generate-report'
 
                 publishHTML([allowMissing: false,
                       alwaysLinkToLastBuild: true,
