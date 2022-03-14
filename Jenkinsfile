@@ -23,7 +23,7 @@ pipeline {
                       alwaysLinkToLastBuild: true,
                       keepAll: true,
                       reportDir: 'locust_results',
-                      reportFiles: '$report$(date +%Y%m%d%H%M).html',
+                      reportFiles: 'index.html',
                       reportName: ‘Locust-Report'
                       includes: '$report$(date +%Y%m%d%H%M).html'
      ])        
