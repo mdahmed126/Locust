@@ -10,6 +10,7 @@ pipeline {
                     sh '''locust -f locustfile.py --headless --only-summary -u 100 -t 10s -r 5 --html $report$(date +%Y%m%d%H%M).html'''
                     sh 'cp -r /var/jenkins_home/workspace/Locust/*.html  locust_results' 
              }
+             stage('Start') {   
              step ([$class: 'CopyArtifact',
                   projectName: ‘Locust’,
                    filter: 'locust_results/*']);
@@ -30,3 +31,4 @@ pipeline {
         }
  }
         }
+}
