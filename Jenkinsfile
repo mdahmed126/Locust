@@ -1,94 +1,35 @@
-def call(Map config = [:]) {
-    pipeline {
+pipeline {
         agent any
+        
+        stages {
+             steps {
+                    sh 'mkdir -p locust_results' 
+                    sh 'python3 -m venv venv/'
+                    sh 'pip3 install -r requirements.txt'
+                    sh 'ls'
+                    sh '''locust -f locustfile.py --headless --only-summary -u 100 -t 10s -r 5 --html index.html'''
+                    sh 'cp -r /var/jenkins_home/workspace/Locust/*.html  locust_results' 
+             }
+             stage('Start') {   
+             step ([$class: 'CopyArtifact',
+                  projectName: ‘Locust’,
+                   filter: 'locust_results/*']);
+       
+              post {
+                always {
+                     sh 'npm run generate-report'
 
-        tools {
-            nodejs "NodeJs"
-        }
-
-        environment {
-            RELEASE = "${env.BRANCH_NAME == "develop" || env.BRANCH_NAME == "master"}"
-            DEPLOY_TO = "${env.BRANCH_NAME == "develop" ? "staging" : env.BRANCH_NAME == "main" ? "production" : ""}"
-        }
-
-            stage('Build') {
-                steps {
-                    sh 'npm ci'
-                }
-            }
-
-            stage('Test') {
-                steps {
-                    sh 'npm run test'
-                }
-            }
-
-           }
-
-            stage('Deploy') {
-
-                when { expression { env.RELEASE == "true" } }
-
-                parallel {
-
-                    stage("staging") {
-                        when { expression { env.DEPLOY_TO == "staging" } }
-                        steps {
-                            copyArtifacts(projectName: 'Locust//dev', filter: '**/*.html')
-                            script {
-                                if (config.build) {
-                                    stage ('npm build') {
-                                        sh 'npm run build'
-                                    }
-                                }
-                            }
-                            sh 'ls -ltr'
-                            sh 'npm run deploy-staging'
-                        }
-                    }
-
-                    stage("production") {
-                        when { expression { env.DEPLOY_TO == "production" } }
-                        steps {
-                            copyArtifacts(projectName: 'Locust/main', filter: '**/*.html')
-                            script {
-                                if (config.build) {
-                                    stage ('npm build') {
-                                        sh 'npm run build'
-                                    }
-                                }
-                            }
-                            sh 'ls -ltr'
-                            sh 'npm run deploy-production'
-                        }
-                    }
-
-                }
-
-            }
-
-        }
-
-        post {
-
-            always {
-
-                sh 'npm run generate-report'
-
-                ppublishHTML target: [
-                      allowMissing: false,
+                publishHTML target: [
+                     allowMissing: false,
                       alwaysLinkToLastBuild: true,
                       keepAll: true,
                       reportDir: 'locust_results',
                       reportFiles: 'index.html',
                       reportName: 'Locust-Report',
                       includes: 'index.html'
-                ]
-
-                
-            }
-
-
-            }
-        
-    
+               ]        
+          }
+        }
+ }
+        }
+}
