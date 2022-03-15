@@ -8,7 +8,7 @@ pipeline {
                     sh 'python3 -m venv venv/'
                     sh 'pip3 install -r requirements.txt'
                     sh 'ls'
-                    sh '''locust -f locustfile.py --headless --only-summary -u 100 -t 10s -r 5 --html index.html'''
+                    sh '''locust -f locustfile.py --headless --only-summary -u 100 -t 14s -r 10 --html index.html'''
                     sh 'cp -r /var/jenkins_home/workspace/Locust/*.html  locust_results' 
              }
         post {
