@@ -4,10 +4,12 @@ pipeline {
         stages {
             stage('Start') {
              steps {
+                 sh 'mkdir -p locust_results' 
                     sh 'python3 -m venv venv/'
                     sh 'pip3 install -r requirements.txt'
                     sh 'ls'
                     sh '''locust -f locustfile.py --headless --only-summary -u 100 -t 10s -r 5 --html index.html'''
+                    sh 'cp -r /var/jenkins_home/workspace/Locust/*.html  locust_results' 
              }
         post {
         always {
