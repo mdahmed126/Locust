@@ -11,7 +11,6 @@ pipeline {
              }
         post {
         always {
-                  sh 'npm run generate-report'
 
                 publishHTML([allowMissing: false,
                       alwaysLinkToLastBuild: true,
