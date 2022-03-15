@@ -18,7 +18,7 @@ pipeline {
                       keepAll: true,
                       reportDir: 'locust_results',
                       reportFiles: 'index.html',
-                      reportName: ‘Locust-Report'
+                      reportName: 'Locust-Report',
                       includes: 'index.html'
      ])        
             }
