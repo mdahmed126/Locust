@@ -2,6 +2,7 @@ pipeline {
         agent any
         
         stages {
+             stage('Start') {
              steps {
                     sh 'mkdir -p locust_results' 
                     sh 'python3 -m venv venv/'
@@ -33,3 +34,4 @@ pipeline {
  }
         }
 }    
+]
