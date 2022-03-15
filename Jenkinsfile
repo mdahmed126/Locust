@@ -8,7 +8,7 @@ def call(Map config = [:]) {
 
         environment {
             RELEASE = "${env.BRANCH_NAME == "develop" || env.BRANCH_NAME == "master"}"
-            DEPLOY_TO = "${env.BRANCH_NAME == "develop" ? "staging" : env.BRANCH_NAME == "master" ? "production" : ""}"
+            DEPLOY_TO = "${env.BRANCH_NAME == "develop" ? "staging" : env.BRANCH_NAME == "main" ? "production" : ""}"
         }
 
             stage('Build') {
